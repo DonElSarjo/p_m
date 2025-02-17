@@ -19,9 +19,7 @@ const getAllProjects = async (req: Request, res: Response) => {
 const createProject = async (req: Request, res: Response) => {
     try {
         const { project_desc, project_owner_id } = req.body;
-        const project = await prisma.projects.create({
-            data: { project_desc, project_owner_id }
-        });     
+        const project = await projectRepository.createProject(project_desc, parseInt(project_owner_id))     
         res.status(201).json(project);
     } catch (error) {
         res.status(500).json({ error: 'Fehler beim Erstellen des Projekts' });
@@ -48,31 +46,25 @@ const updateProject = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         let { project_desc, project_status } = req.body;
+        const { user_id, username, email } = req.user!
 
-        // Check for correct user id
-       
-
-        // Update if all went well
-        const updatedProject = await projectRepository.updateProject(parseInt(id), project_desc, project_status);
+        const updatedProject = await projectRepository.updateProject(parseInt(id), project_desc, project_status, user_id);
         res.json(updatedProject);
     } catch (error) {
-        console.error('Fehler beim Aktualisieren des Projekts:', error);
         res.status(500).json({ error: 'Fehler beim Aktualisieren des Projekts' });
     }
 }
 
 // Marks project as deleted by ID.
-// Error message, if open tasks for project ID
+// Cascades deletion flag through tasks
 const softDeleteProject = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        await prisma.projects.update({
-            where: { project_id: parseInt(id) },
-            data: { d_flag: 1 }
-        });
+        const { project_id } = req.params;
+        const { user_id, username, email } = req.user!
+        await projectRepository.softDeleteProject(parseInt(project_id), user_id)
         res.json({ message: 'Projekt als gelöscht markiert' });
     } catch (error) {
-        res.status(500).json({ error: 'Fehler beim Soft-Löschen des Projekts' });
+        res.status(403).json({ error: 'Error deleting project, does not exist or not owned by user' });
     }
 };
 

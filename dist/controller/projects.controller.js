@@ -59,9 +59,7 @@ const getAllProjects = (req, res) => __awaiter(void 0, void 0, void 0, function*
 const createProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { project_desc, project_owner_id } = req.body;
-        const project = yield prisma.projects.create({
-            data: { project_desc, project_owner_id }
-        });
+        const project = yield projectRepository.createProject(project_desc, parseInt(project_owner_id));
         res.status(201).json(project);
     }
     catch (error) {
@@ -89,13 +87,11 @@ const updateProject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const { id } = req.params;
         let { project_desc, project_status } = req.body;
-        // Check for correct user id
-        // Update if all went well
-        const updatedProject = yield projectRepository.updateProject(parseInt(id), project_desc, project_status);
+        const { user_id, username, email } = req.user;
+        const updatedProject = yield projectRepository.updateProject(parseInt(id), project_desc, project_status, user_id);
         res.json(updatedProject);
     }
     catch (error) {
-        console.error('Fehler beim Aktualisieren des Projekts:', error);
         res.status(500).json({ error: 'Fehler beim Aktualisieren des Projekts' });
     }
 });
@@ -103,15 +99,13 @@ const updateProject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 // Error message, if open tasks for project ID
 const softDeleteProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        yield prisma.projects.update({
-            where: { project_id: parseInt(id) },
-            data: { d_flag: 1 }
-        });
+        const { project_id } = req.params;
+        const { user_id, username, email } = req.user;
+        yield projectRepository.softDeleteProject(parseInt(project_id), user_id);
         res.json({ message: 'Projekt als gelöscht markiert' });
     }
     catch (error) {
-        res.status(500).json({ error: 'Fehler beim Soft-Löschen des Projekts' });
+        res.status(403).json({ error: 'Error deleting project, does not exist or not owned by user' });
     }
 });
 exports.default = { getAllProjects, createProject, getProjectById, updateProject, softDeleteProject };

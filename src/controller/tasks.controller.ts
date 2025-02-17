@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client'
 import { Request, Response } from 'express';
-import * as userRepository from '../repository/tasks.repository';
+import * as taskRepository from '../repository/tasks.repository';
 import { NewTask } from '../types/tasks.types';
 
 const prisma = new PrismaClient();
@@ -9,10 +9,12 @@ const prisma = new PrismaClient();
 const getTasksByProject = async (req: Request, res: Response) => {
     try {
         const { projectId } = req.params;
-        const tasks = await prisma.tasks.findMany({
-            where: { project_id: parseInt(projectId), d_flag: 0 }
-        });
-        res.json(tasks);
+        const tasks = await taskRepository.getTasksByProject(parseInt(projectId))
+        if (!tasks) {
+            res.status(404).json({ error: 'No task for ID' })
+        } else {
+            res.status(201).json(tasks)
+        }
     } catch (error) {
         res.status(500).json({ error: 'Fehler beim Abrufen der Aufgaben' });
     }
@@ -21,13 +23,26 @@ const getTasksByProject = async (req: Request, res: Response) => {
 // Created new task for given project ID
 const createTask = async (req: Request, res: Response) => {
     try {
-        const newTask: NewTask = req.body;
-        const task = await prisma.tasks.create({
-            data: newTask
-        });
+        const { task_desc, project_id } = req.body;
+        const { user_id, username, email } = req.user!
+        const task = await taskRepository.createTask(task_desc, user_id, parseInt(project_id))
         res.status(201).json(task);
     } catch (error) {
-        res.status(500).json({ error: 'Fehler beim Erstellen der Aufgabe' });
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            // task_desc, project_id, task_owner not unique
+            if (error.code === 'P2002') {
+            res.status(403).json({message: 'Unique constraint failed', fields: error.meta})
+            }
+            console.log(error.code)
+        }
+        // trigger for poject and task ownership fired
+        else if (error instanceof Prisma.PrismaClientUnknownRequestError) {       
+            res.status(403).json({message: error.message})
+        }
+        // so client gets any response
+        else {
+            res.status(500).json({message: error})
+        }
     }
 };
 
@@ -51,10 +66,7 @@ const updateTask = async (req: Request, res: Response) => {
 const softDeleteTask = async (req: Request, res: Response) => {
     try {
         const { projectId, taskId } = req.params;
-        await prisma.tasks.update({
-            where: { task_id: parseInt(taskId), project_id: parseInt(projectId) },
-            data: { d_flag: 1 }
-        });
+        await taskRepository.softDeleteTask(parseInt(taskId))
         res.json({ message: 'Aufgabe als gelöscht markiert' });
     } catch (error) {
         res.status(500).json({ error: 'Fehler beim Soft-Löschen der Aufgabe' });

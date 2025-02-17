@@ -42,16 +42,16 @@ const getProjectById = (projectId) => __awaiter(void 0, void 0, void 0, function
     });
 });
 exports.getProjectById = getProjectById;
-const updateProject = (projectId, project_desc, project_status) => __awaiter(void 0, void 0, void 0, function* () {
+const updateProject = (projectId, project_desc, project_status, project_owner_id) => __awaiter(void 0, void 0, void 0, function* () {
     return yield prisma.projects.update({
-        where: { project_id: projectId, d_flag: 0 },
+        where: { project_id: projectId, d_flag: 0, project_owner_id: project_owner_id },
         data: { project_desc, project_status: project_status },
     });
 });
 exports.updateProject = updateProject;
-const softDeleteProject = (projectId) => __awaiter(void 0, void 0, void 0, function* () {
+const softDeleteProject = (projectId, project_owner_id) => __awaiter(void 0, void 0, void 0, function* () {
     return yield prisma.projects.update({
-        where: { project_id: projectId },
+        where: { project_id: projectId, project_owner_id: project_owner_id },
         data: { d_flag: 1 },
     });
 });

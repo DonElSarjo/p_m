@@ -13,7 +13,15 @@ exports.softDeleteTask = exports.updateTask = exports.createTask = exports.getTa
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getTasksByProject = (projectId) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield prisma.tasks.findMany({ where: { project_id: projectId, d_flag: 0 } });
+    return yield prisma.tasks.findMany({
+        where: { project_id: projectId, d_flag: 0 },
+        select: {
+            project_id: true,
+            task_id: true,
+            task_desc: true,
+            task_status: true,
+        }
+    });
 });
 exports.getTasksByProject = getTasksByProject;
 const createTask = (task_desc, task_owner_id, project_id) => __awaiter(void 0, void 0, void 0, function* () {

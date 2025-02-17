@@ -50,7 +50,7 @@ const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const users = yield userRepository.getAllUsers();
         if (!users) {
-            res.status(404).json({ error: 'No users in database' });
+            res.status(404).json({ error: 'No user in database' });
         }
         else {
             res.status(201).json(users);

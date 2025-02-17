@@ -136,3 +136,17 @@ CREATE DEFINER=`root`@`localhost` TRIGGER `user_delete` BEFORE UPDATE ON `users`
 END
 //
 DELIMITER ;
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` TRIGGER `tasks_before_insert` BEFORE INSERT ON `tasks` FOR EACH ROW BEGIN
+	DECLARE projects_of_user VARCHAR(50);
+
+   SELECT GROUP_CONCAT(DISTINCT project_id) INTO projects_of_user
+   FROM projects
+   WHERE project_owner_id = NEW.task_owner_id;
+
+   IF NOT FIND_IN_SET(NEW.project_id, projects_of_user) THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'You can only create tasks for your own projects';
+   END IF;
+END
+//

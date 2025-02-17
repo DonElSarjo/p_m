@@ -8,10 +8,9 @@ const prisma = new PrismaClient();
 // Gets all users
 const getAllUsers = async (req: Request, res: Response) => {
     try {
-        const users = await userRepository.getAllUsers();
-        
+        const users = await userRepository.getAllUsers();     
         if (!users) {
-            res.status(404).json({ error: 'No users in database' })
+            res.status(404).json({ error: 'No user in database' })
         } else {
             res.status(201).json(users)
         }

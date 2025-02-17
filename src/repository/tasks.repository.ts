@@ -4,7 +4,15 @@ import { TaskStatus } from '../types/tasks.types';
 const prisma = new PrismaClient();
 
 export const getTasksByProject = async (projectId: number) => {
-    return await prisma.tasks.findMany({ where: { project_id: projectId, d_flag: 0 } });
+    return await prisma.tasks.findMany({ 
+        where: { project_id: projectId, d_flag: 0 },
+        select: {
+            project_id: true,
+            task_id: true,
+            task_desc: true,
+            task_status: true,
+        }
+    });
 };
 
 export const createTask = async (task_desc: string, task_owner_id: number, project_id: number) => {
