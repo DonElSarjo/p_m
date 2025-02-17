@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model projects {
+  project_id       Int                     @id @default(autoincrement())
+  project_desc     String                  @db.VarChar(255)
+  project_status   projects_project_status @default(CREATED)
+  project_owner_id Int
+  d_flag           Int                     @default(0) @db.TinyInt
+  c_date           DateTime                @default(now()) @db.Timestamp(0)
+  u_date           DateTime                @default(now()) @db.Timestamp(0)
+  users            users                   @relation(fields: [project_owner_id], references: [user_id], onDelete: Cascade, map: "FK__project_owner")
+  tasks            tasks[]
+
+  @@index([project_owner_id], map: "FK__project_owner")
+  @@index([d_flag], map: "d_flag")
+}
+
+model tasks {
+  task_id       Int               @id @default(autoincrement())
+  task_desc     String            @db.VarChar(255)
+  task_status   tasks_task_status @default(CREATED)
+  task_owner_id Int
+  project_id    Int
+  d_flag        Int               @default(0) @db.TinyInt
+  c_date        DateTime          @default(now()) @db.Timestamp(0)
+  u_date        DateTime          @default(now()) @db.Timestamp(0)
+  projects      projects          @relation(fields: [project_id], references: [project_id], onDelete: Cascade, map: "FK__project_id")
+  users         users             @relation(fields: [task_owner_id], references: [user_id], onDelete: Cascade, map: "FK__task_owner")
+
+  @@unique([task_desc, project_id, task_owner_id], map: "desc_project_owner")
+  @@index([project_id], map: "FK__project_id")
+  @@index([task_owner_id], map: "FK__task_owner")
+  @@index([d_flag], map: "d_flag")
+}
+
+model users {
+  user_id  Int        @id @default(autoincrement())
+  username String     @db.VarChar(50)
+  email    String     @unique(map: "email") @db.VarChar(100)
+  d_flag   Int        @default(0) @db.TinyInt
+  c_date   DateTime   @default(now()) @db.Timestamp(0)
+  u_date   DateTime   @default(now()) @db.Timestamp(0)
+  projects projects[]
+  tasks    tasks[]
+
+  @@index([d_flag], map: "d_flag")
+}
+
+enum projects_project_status {
+  CREATED
+  PROCESSING
+  PENDING
+  DONE
+}
+
+enum tasks_task_status {
+  CREATED
+  PROCESSING
+  DONE
+}
