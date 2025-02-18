@@ -90,3 +90,7 @@ npm test
 - Ensure the database is reset before testing.
 
 For further assistance, refer to the project documentation or contact the maintainers.
+
+#### Disclaimer
+
+This document has been reviewed for clarity and accuracy. AI-based tools were utilized to assist in checking formulations and ensuring consistency, but all final decisions and validations were made by human reviewers
