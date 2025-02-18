@@ -119,7 +119,7 @@ Stores task details and associates tasks with projects and users (owners).
 
 ## `Normalization Choice`
 
-### `3N`
+### `3NF`
 
 1. **Performance Efficiency:**
 
@@ -139,6 +139,16 @@ Stores task details and associates tasks with projects and users (owners).
 4. **Avoiding Excessive Joins:**
    - 5NF could introduce excessive join operations, reducing query performance.
    - 3NF maintains reasonable data integrity without requiring excessive decomposition.
+
+## `Creation Script`
+
+### `init_db.sql`
+
+Creates database, tables and triggers
+
+### `populate_db.sql`
+
+Populates tables with test data
 
 ## `Disclaimer`
 
