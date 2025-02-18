@@ -15,13 +15,13 @@
   "license": "ISC",
   "description": "To install the project\r ```shell\r npm install\r ```\r To run in dev\r ```shell\r npm run dev\r ```\r To build and run\r ```shell\r npm run build\r npm run start\r ```\r To launch the tests\r ```shell\r npm run test\r ```\r ## Prisma initialisation",
   "dependencies": {
-    "@prisma/client": "^6.3.1",
-    "@types/supertest": "^6.0.2"
+    "@prisma/client": "^6.3.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.4",
+    "@types/supertest": "^6.0.2",
     "express": "^4.21.2",
     "jest": "^29.7.0",
     "nodemon": "^3.1.9",
