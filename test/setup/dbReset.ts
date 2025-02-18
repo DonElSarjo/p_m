@@ -22,7 +22,7 @@ async function executeSQLFile(filePath: string) {
 
 export async function resetDatabase() {
     try {
-        console.log('Resetting database...');
+        //console.log('Resetting database...');
 
         // Drop and recreate the schema
         await executeSQLFile(path.join(__dirname, '../db/init_db.sql'));
@@ -30,7 +30,7 @@ export async function resetDatabase() {
         // Insert test data
         await executeSQLFile(path.join(__dirname, '../db/populate_db.sql'));
 
-        console.log('Database reset complete.');
+        //console.log('Database reset complete.');
     } catch (error) {
         console.error('Error resetting database:', error);
     }
