@@ -33,10 +33,10 @@ export const getProjectById = async (projectId: number) => {
     });
 };
 
-export const updateProject = async (projectId: number, project_desc: string, project_status: ProjectStatus, project_owner_id: number) => {
+export const updateProject = async (projectId: number, project_status: ProjectStatus, project_owner_id: number) => {
     return await prisma.projects.update({
         where: { project_id: projectId, d_flag: 0 , project_owner_id: project_owner_id},
-        data: { project_desc, project_status: project_status as ProjectStatus},
+        data: { project_status: project_status as ProjectStatus},
     });
 };
 

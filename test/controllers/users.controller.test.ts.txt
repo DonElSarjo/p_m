@@ -12,7 +12,7 @@ app.post('/users', createUser);
 
 jest.mock('@/repository/users.repository', () => {
     return {
-        createUser: jest.fn(), // ✅ Ensures createUser is a mocked function
+        createUser: jest.fn(),
         getAllUsers: jest.fn(),
     };
 });
@@ -31,13 +31,13 @@ describe('GET /users', () => {
 
         (userRepository.getAllUsers as jest.Mock).mockResolvedValue(usersInDB);
 
-        const response = await request(app).get('/users').expect(201);
+        const response = await request(app).get('/users').expect(200);
 
         expect(response.body).toEqual(usersInDB);
     });
 });
 
-describe('POST /users', () => {
+describe('POST /users', () => {  
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -60,6 +60,9 @@ describe('POST /users', () => {
 
     it('should return 403 for duplicate entry', async () => {
         const duplicateUser = { username: 'Alice', email: 'alice@xmpl.com' };
+        (userRepository.createUser as jest.Mock).mockRejectedValue(new Prisma.PrismaClientKnownRequestError(
+            'Unique constraint failed', { code: 'P2002', clientVersion: '4.0.0', meta: { field: 'email' } }
+        ));
 
         const response = await request(app)
             .post('/users')

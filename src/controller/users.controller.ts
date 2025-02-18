@@ -12,7 +12,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
         if (!users) {
             res.status(404).json({ error: 'No user in database' })
         } else {
-            res.status(201).json(users)
+            res.status(200).json(users)
         }
     } catch (error) {
         res.status(500).json(error);
@@ -31,7 +31,6 @@ export const createUser = async (req: Request, res: Response) => {
           if (error.code === 'P2002') {
             res.status(403).json({message: 'Unique constraint failed', fields: error.meta})
           }
-          console.log(error.code)
         }
         // CC__ constrains failed invalid username or email
         else if (error instanceof Prisma.PrismaClientUnknownRequestError) {       

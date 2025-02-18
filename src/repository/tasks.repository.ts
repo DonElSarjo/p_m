@@ -21,16 +21,16 @@ export const createTask = async (task_desc: string, task_owner_id: number, proje
     });
 };
 
-export const updateTask = async (taskId: number, task_desc: string, task_status: TaskStatus) => {
+export const updateTask = async (taskId: number, taskStatus: TaskStatus, userId: number) => {
     return await prisma.tasks.update({
-        where: { task_id: taskId },
-        data: { task_desc, task_status },
+        where: { task_id: taskId , task_owner_id: userId},
+        data: { task_status: taskStatus },
     });
 };
 
-export const softDeleteTask = async (taskId: number) => {
+export const softDeleteTask = async (taskId: number , userId: number) => {
     return await prisma.tasks.update({
-        where: { task_id: taskId },
+        where: { task_id: taskId, task_owner_id: userId },
         data: { d_flag: 1 },
     });
 };

@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 async function executeSQLFile(filePath: string) {
     const sqlFileContent = fs.readFileSync(filePath, 'utf8');
     
-    // Split SQL file content at "#NQ" and execute each statement separately
+    // Split SQL file content at "#NQ", trims, filters out empty and executes
     const queries = sqlFileContent.split('#NQ').map(q => q.trim()).filter(q => q.length > 0);
 
     for (const query of queries) {
@@ -23,8 +23,8 @@ async function executeSQLFile(filePath: string) {
 export async function resetDatabase() {
     try {
         //console.log('Resetting database...');
-
-        // Drop and recreate the schema
+        
+        // Create database, tables and triggers
         await executeSQLFile(path.join(__dirname, '../db/init_db.sql'));
 
         // Insert test data

@@ -9,22 +9,22 @@ app.use(express.json());
 app.use(extractUserInfo);
 
 // User Endpunkte
-app.get('/users', userController.getAllUsers);
-app.post('/users', userController.createUser);
+app.get('/users', userController.getAllUsers); //ok + test
+app.post('/users', userController.createUser); //ok + test
 //app.delete('/users/:id', userController.softDeleteUser);
 
 // Project Endpunkte
-app.get('/projects', projectController.getAllProjects); //ok
-app.post('/projects', projectController.createProject); //ok
-app.get('/projects/:id', projectController.getProjectById); //ok
-app.put('/projects/:id', projectController.updateProject);
-app.delete('/projects/:id', projectController.softDeleteProject); //ok
+app.get('/projects/list', projectController.getAllProjects); //ok
+app.post('/projects/create', projectController.createProject); //ok
+app.get('/projects/fetch', projectController.getProjectById); //ok
+app.put('/projects/update', projectController.updateProject); //ok
+app.delete('/projects/delete', projectController.softDeleteProject); //ok
 
 // Task Endpunkte
-app.get('/projects/:projectId', taskController.getTasksByProject); //ok
-app.post('/projects/tasks', taskController.createTask); 
-app.put('/projects/tasks/:taskId', taskController.updateTask);
-app.delete('/projects/:projectId/tasks/:taskId', taskController.softDeleteTask);
+app.get('/projects/tasks/list', taskController.getTasksByProject); //ok
+app.post('/projects/tasks/create', taskController.createTask); //ok
+app.put('/projects/tasks/update', taskController.updateTask); //ok
+app.delete('/projects/tasks/delete', taskController.softDeleteTask); //ok
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

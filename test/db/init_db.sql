@@ -27,6 +27,7 @@ CREATE TABLE `projects` (
 	`c_date` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
 	`u_date` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
 	PRIMARY KEY (`project_id`) USING BTREE,
+	UNIQUE INDEX `project_desc` (`project_desc`, `project_owner_id`) USING BTREE,
 	INDEX `FK__project_owner` (`project_owner_id`) USING BTREE,
 	INDEX `d_flag` (`d_flag`) USING BTREE,
 	CONSTRAINT `FK__project_owner` FOREIGN KEY (`project_owner_id`) REFERENCES `users` (`user_id`) ON UPDATE CASCADE ON DELETE CASCADE
