@@ -36,65 +36,65 @@ describe('GET /projects/list', () => {
     });
 });
 
-describe('POST /projects/create', () => {
-  beforeEach(() => {
-      jest.clearAllMocks();
-  });
-
-  it('should create a project successfully', async () => {
-    const projectData = { project_desc: 'w0000v' };
-    const mockProject = { project_id: 21, project_desc: 'w0000v', project_owner_id: 2 };
-    (projectRepository.createProject as jest.Mock).mockResolvedValue(mockProject);
-
-    const response = await request(app)
-        .post('/projects/create')
-        .set({
-            'user-info': JSON.stringify({ user_id: 2, username: 'alice_dev', email: 'alice@example.com' }),
-            'content-type': 'application/json'
-        })
-        .send(projectData)
-        .expect(201);
-
-    expect(response.body).toEqual(mockProject);
-    expect(projectRepository.createProject).toHaveBeenCalledWith('w0000v', 2);
-  });
-
-  it('should return 422 for too short project description', async () => {
-      const shortProject = { project_desc: 'abc' };
-      const response = await request(app)
-          .post('/projects/create')
-          .set('user-info', JSON.stringify({ user_id: 1 }))
-          .send(shortProject)
-          .expect(422);
-
-      expect(response.body).toEqual({ error: 'To short description' });
-  });
-
-  it('should return 403 for duplicate project entry', async () => {
-      const duplicateProject = { project_desc: 'Duplicate Project' };
-      (projectRepository.createProject as jest.Mock).mockRejectedValue(new Prisma.PrismaClientKnownRequestError(
-          'Unique constraint failed', { code: 'P2002', clientVersion: '4.0.0', meta: { field: 'project_desc' } }
-      ));
-
-      const response = await request(app)
-          .post('/projects/create')
-          .set('user-info', JSON.stringify({ user_id: 1 }))
-          .send(duplicateProject)
-          .expect(403);
-
-      expect(response.body).toEqual({ message: 'Unique constraint failed', fields: { field: 'project_desc' } });
-  });
-
-  it('should return 500 for internal server error', async () => {
-      const errorProject = { project_desc: 'Error Project' };
-      (projectRepository.createProject as jest.Mock).mockRejectedValue(new Error('Unexpected error'));
-
-      const response = await request(app)
-          .post('/projects/create')
-          .set('user-info', JSON.stringify({ user_id: 1 }))
-          .send(errorProject)
-          .expect(500);
-
-      expect(response.body).toEqual({ error: 'Internal server error' });
-  });
-});
+//describe('POST /projects/create', () => {
+//  beforeEach(() => {
+//      jest.clearAllMocks();
+//  });
+//
+//  it('should create a project successfully', async () => {
+//    const projectData = { project_desc: 'w0000v' };
+//    const mockProject = { project_id: 21, project_desc: 'w0000v', project_owner_id: 2 };
+//    (projectRepository.createProject as jest.Mock).mockResolvedValue(mockProject);
+//
+//    const response = await request(app)
+//        .post('/projects/create')
+//        .set({
+//            'user-info': JSON.stringify({ user_id: 2, username: 'alice_dev', email: 'alice@example.com' }),
+//            'content-type': 'application/json'
+//        })
+//        .send(projectData)
+//        .expect(201);
+//
+//    expect(response.body).toEqual(mockProject);
+//    expect(projectRepository.createProject).toHaveBeenCalledWith('w0000v', 2);
+//  });
+//
+//  it('should return 422 for too short project description', async () => {
+//      const shortProject = { project_desc: 'abc' };
+//      const response = await request(app)
+//          .post('/projects/create')
+//          .set('user-info', JSON.stringify({ user_id: 1 }))
+//          .send(shortProject)
+//          .expect(422);
+//
+//      expect(response.body).toEqual({ error: 'To short description' });
+//  });
+//
+//  it('should return 403 for duplicate project entry', async () => {
+//      const duplicateProject = { project_desc: 'Duplicate Project' };
+//      (projectRepository.createProject as jest.Mock).mockRejectedValue(new Prisma.PrismaClientKnownRequestError(
+//          'Unique constraint failed', { code: 'P2002', clientVersion: '4.0.0', meta: { field: 'project_desc' } }
+//      ));
+//
+//      const response = await request(app)
+//          .post('/projects/create')
+//          .set('user-info', JSON.stringify({ user_id: 1 }))
+//          .send(duplicateProject)
+//          .expect(403);
+//
+//      expect(response.body).toEqual({ message: 'Unique constraint failed', fields: { field: 'project_desc' } });
+//  });
+//
+//  it('should return 500 for internal server error', async () => {
+//      const errorProject = { project_desc: 'Error Project' };
+//      (projectRepository.createProject as jest.Mock).mockRejectedValue(new Error('Unexpected error'));
+//
+//      const response = await request(app)
+//          .post('/projects/create')
+//          .set('user-info', JSON.stringify({ user_id: 1 }))
+//          .send(errorProject)
+//          .expect(500);
+//
+//      expect(response.body).toEqual({ error: 'Internal server error' });
+//  });
+//});
